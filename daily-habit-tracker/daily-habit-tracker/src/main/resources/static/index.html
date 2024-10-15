@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Habit Tracker</title>
+    <style>
+       
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Daily Habit Tracker</h1>
+
+        <form id="habitForm">
+            <label for="habit">Habit Name</label>
+            <input type="text" id="habit" name="habit" placeholder="E.g., Drink Water">
+
+            <label for="target">Daily Target</label>
+            <input type="number" id="target" name="target" placeholder="E.g., 8 glasses of water">
+
+            <label for="progress">Your Progress</label>
+            <input type="number" id="progress" name="progress" placeholder="E.g., 5 glasses of water">
+
+            <button type="submit">Submit Habit</button>
+        </form>
+
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <h3>Habit Progress</h3>
+            <div class="progress-bar">
+                <div class="progress-bar-inner" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("habitForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            // Get form data
+            const habit = document.getElementById("habit").value;
+            const target = parseInt(document.getElementById("target").value);
+            const progress = parseInt(document.getElementById("progress").value);
+
+            // Calculate the percentage
+            const percentage = (progress / target) * 100;
+
+            // Update the progress bar
+            const progressBar = document.getElementById("progressBar");
+            progressBar.style.width = percentage + "%";
+
+            // Show the progress container
+            document.getElementById("progressContainer").style.display = "block";
+
+            // Send the form data to the backend
+            fetch("/habits", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: habit,
+                    target: target,
+                    progress: progress,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Habit saved:", data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
